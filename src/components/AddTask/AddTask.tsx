@@ -11,7 +11,7 @@ import {
   IonItem,
   IonLabel,
 } from "@ionic/react";
-import { Task, TaskState, useService } from "../hooks/useTaskListService";
+import { Task, TaskState, useService } from "../../hooks/useTaskListService";
 
 const AddTaskModal: React.FC<{
   isOpen: boolean;

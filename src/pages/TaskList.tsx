@@ -1,4 +1,4 @@
-import TaskListItem from "../components/TaskListItem";
+import TaskListItem from "../components/TaskListItem/TaskListItem";
 import React, { useEffect, useState } from "react";
 import useService, { Task } from "../hooks/useTaskListService";
 import {
@@ -14,7 +14,7 @@ import {
   useIonViewWillEnter,
 } from "@ionic/react";
 import { add } from "ionicons/icons";
-import AddTaskModal from "../components/AddTask";
+import AddTaskModal from "../components/AddTask/AddTask";
 
 const TaskList: React.FC = () => {
   const TaskListService = useService();

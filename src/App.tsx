@@ -53,6 +53,7 @@ import "./theme/variables.css";
 import TaskList from "./pages/TaskList";
 import { logOutOutline, menuOutline } from "ionicons/icons";
 import { useEffect } from "react";
+import ToDoLists from "./pages/ToDoLists";
 
 setupIonicReact();
 
@@ -98,6 +99,11 @@ const App: React.FC = () => {
                   <IonLabel>Task List</IonLabel>
                 </IonItem>
               </IonMenuToggle>
+              <IonMenuToggle>
+                <IonItem routerLink="/todolists">
+                  <IonLabel>ToDoLists</IonLabel>
+                </IonItem>
+              </IonMenuToggle>
             </IonList>
           </IonContent>
         </IonMenu>
@@ -108,6 +114,7 @@ const App: React.FC = () => {
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={SignUp} />
             <Route exact path="/home" component={Home} />
+            <Route exact path="/todolists" component={ToDoLists} />
             <Route exact path="/tasklist" component={TaskList} />
             <Route exact path="/" render={() => <Redirect to="/login" />} />
             <Route path="*">

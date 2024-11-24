@@ -8,7 +8,7 @@ import {
   IonIcon,
   IonButton,
 } from "@ionic/react";
-import useService,{ Task } from "../hooks/useTaskListService";
+import useService,{ Task } from "../../hooks/useTaskListService";
 import { trashOutline } from "ionicons/icons";
 
 interface ListItem {
