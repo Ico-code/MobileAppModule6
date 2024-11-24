@@ -1,0 +1,60 @@
+/* For information on how to create your own theme, please see:
+http://ionicframework.com/docs/theming/ */
+
+.center-content {
+    display: flex;
+}
+
+.pe-3 {
+    padding: 15px;
+}
+.me-3 {
+    padding: 15px;
+}
+
+.me-a {
+    margin-right: auto;
+}
+
+.ms-a {
+    margin-left:auto;
+}
+
+#addButton {
+    width: 46px;
+    height: 46px;
+}
+
+.menu-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+}
+
+.button-size {
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 60px;
+    height: 36px;
+    margin-right: 20px;
+}
+
+.flexContainer {
+    display: flex;
+    flex-direction:row;
+    width:100%;
+}
+
+.logOut {
+    margin-left: auto !important;
+    margin-right: 20px !important;
+    width: 60px;
+    height: 40px;
+    border-radius: 10px;
+    transition: 0.25s background ease;
+}
+
+.logOut:hover {
+    background-color: red !important;
+}
