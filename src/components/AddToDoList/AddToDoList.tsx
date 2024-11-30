@@ -11,39 +11,31 @@ import {
   IonItem,
   IonLabel,
 } from "@ionic/react";
-import { Task, TaskState, useService } from "../../hooks/useTaskListService";
+import useToDoService, { Todolist } from "../../hooks/useToDoListService";
 
-const AddTaskModal: React.FC<{
+const AddTodolistModal: React.FC<{
   isOpen: boolean;
   onClose: () => void;
-  onSave: (task: Task) => void;
-  parentId: string;
-}> = ({ isOpen, onClose, onSave, parentId }) => {
+  onSave: (Todolist: Todolist) => void;
+}> = ({ isOpen, onClose, onSave }) => {
 
-  const TaskService = useService();
+  const TodoService = useToDoService();
 
   const [title, setTitle] = useState("");
-  const [parentListId, setParentListId] = useState("");
-  const [subtitle, setSubtitle] = useState("");
   const [description, setDescription] = useState("");
 
   const handleSave = () => {
-    const newTask: Task = {
+    const newList: Todolist = {
       id: uuidv4(), // Generate a unique ID
-      parentListId,
       title,
-      subtitle,
       description,
-      state: TaskState.incomplete,
     };
 
-    TaskService.addTasks([newTask]);
+    TodoService.addToDoLists([newList]);
 
-    onSave(newTask);
+    onSave(newList);
 
     setTitle("");
-    setParentListId(parentId);
-    setSubtitle("");
     setDescription("");
 
     onClose();
@@ -53,7 +45,7 @@ const AddTaskModal: React.FC<{
     <IonModal isOpen={isOpen} onDidDismiss={onClose}>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Add Task</IonTitle>
+          <IonTitle>Add Todolist</IonTitle>
           <IonButton slot="end" onClick={onClose} className="pe-3">
             Close
           </IonButton>
@@ -65,13 +57,6 @@ const AddTaskModal: React.FC<{
           <IonInput
             value={title}
             onIonChange={(e) => setTitle(e.detail.value!)}
-          />
-        </IonItem>
-        <IonItem>
-          <IonLabel position="floating">Subtitle</IonLabel>
-          <IonInput
-            value={subtitle}
-            onIonChange={(e) => setSubtitle(e.detail.value!)}
           />
         </IonItem>
         <IonItem>
@@ -89,4 +74,4 @@ const AddTaskModal: React.FC<{
   );
 };
 
-export default AddTaskModal;
+export default AddTodolistModal;

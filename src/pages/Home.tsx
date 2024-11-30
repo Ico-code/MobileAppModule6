@@ -12,7 +12,7 @@ const Home: React.FC = () => {
   const history = useHistory();
 
   const goToTasks = () => {
-    history.push("/tasklist");
+    history.push("/todolists");
   };
   return (
     <IonPage>
@@ -23,7 +23,7 @@ const Home: React.FC = () => {
       </IonHeader>
       <IonContent className="ion-justify-content-center ion-text-center ion-align-items-center center-content">
         <p>Welcome to the main page!</p>
-        <IonButton onClick={goToTasks}>Go to Task List!</IonButton>
+        <IonButton onClick={goToTasks}>Go to Todo-Lists!</IonButton>
       </IonContent>
     </IonPage>
   );
