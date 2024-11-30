@@ -1,6 +1,11 @@
 /* For information on how to create your own theme, please see:
 http://ionicframework.com/docs/theming/ */
 
+.router-outlet {
+    max-width: 800px; 
+    margin: 0 auto;
+}
+
 .center-content {
     display: flex;
 }
@@ -49,12 +54,16 @@ http://ionicframework.com/docs/theming/ */
 .logOut {
     margin-left: auto !important;
     margin-right: 20px !important;
-    width: 60px;
     height: 40px;
     border-radius: 10px;
     transition: 0.25s background ease;
 }
 
-.logOut:hover {
-    background-color: red !important;
+.width-100 {
+    width: 100%;
+}
+
+#taskHeader {
+    display: flex;
+    flex-direction: row;
 }

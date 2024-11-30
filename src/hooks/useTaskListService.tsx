@@ -44,6 +44,10 @@ export const useService = () => {
     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
   };
 
+  const editTaskList = (taskId: string) => {
+    return;
+  }
+
   const defaultTasks = () => {
     return [
       {
@@ -93,6 +97,7 @@ export const useService = () => {
     getTasks,
     deleteTasks,
     addTasks,
+    editTaskList,
     defaultTasks,
   };
 };

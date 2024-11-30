@@ -26,6 +26,10 @@ const useToDoService = () => {
     localStorage.setItem("todolists", JSON.stringify(updatedToDoLists));
   };
 
+  const editToDoList = (todolistId: string) => {
+    return;
+  }
+
   const defaultToDolists = (): Todolist[] => {
     return [
       {
@@ -60,6 +64,7 @@ const useToDoService = () => {
     getToDoLists,
     deleteToDoList,
     addToDoLists,
+    editToDoList,
     defaultToDolists,
   };
 };

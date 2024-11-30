@@ -12,6 +12,9 @@ import {
   IonMenu,
   IonMenuToggle,
   IonRouterOutlet,
+  IonTabBar,
+  IonTabButton,
+  IonTabs,
   IonTitle,
   IonToolbar,
   setupIonicReact,
@@ -51,81 +54,95 @@ import "@ionic/react/css/palettes/dark.system.css";
 /* Theme variables */
 import "./theme/variables.css";
 import TaskList from "./pages/TaskList";
-import { logOutOutline, menuOutline } from "ionicons/icons";
-import { useEffect } from "react";
+import {
+  home,
+  list,
+  logOutOutline,
+  menuOutline,
+  personCircleOutline,
+  settings,
+} from "ionicons/icons";
+import { useEffect, useState } from "react";
 import ToDoLists from "./pages/ToDoLists";
+import UserModal from "./components/UserModal/UserModal";
 
 setupIonicReact();
 
 const App: React.FC = () => {
-  const history = useHistory();
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-  const logout = () => {
-    history.push("/login");
+  const [loggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  const fetchLoggedInState = (): boolean => {
+    const state: boolean = JSON.parse(
+      localStorage.getItem("loggedin") || "false"
+    );
+    return state;
   };
+
+  const setLoggedInState = (newState: boolean) => {
+    localStorage.setItem("loggedin", JSON.stringify(newState));
+    setIsLoggedIn(newState);
+  };
+
+  useEffect(() => {
+    const currentState: boolean = fetchLoggedInState();
+    setIsLoggedIn(currentState);
+  }, []);
 
   return (
     <IonApp>
       <IonReactRouter>
-        <IonRouterOutlet id="main" style={{ maxWidth: '800px', margin: '0 auto' }}>
-          <Switch>
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/signup" component={SignUp} />
-            <Route exact path="/home" component={Home} />
-            <Route exact path="/todolists" component={ToDoLists} />
-            <Route exact path="/tasks/:listId" component={TaskList} />
-            <Route exact path="/" render={() => <Redirect to="/login" />} />
-            <Route path="*">
-              <Redirect to="/" />
-            </Route>
-          </Switch>
-        </IonRouterOutlet>
-        {location.pathname !== "/login" && location.pathname !== "/signup" && (
-          <>
-            <IonHeader>
-              <IonToolbar>
-                <IonButtons>
-                  <IonMenuToggle className="me-a button-size menu-icon">
-                    <IonIcon icon={menuOutline}></IonIcon>
-                  </IonMenuToggle>
-                  <IonButton
-                    className="logOut"
-                    onClick={logout}
-                    routerLink="/login"
-                  >
-                    <IonIcon icon={logOutOutline}></IonIcon>
-                  </IonButton>
-                </IonButtons>
-              </IonToolbar>
-            </IonHeader>
-            <IonMenu contentId="main">
-              <IonHeader>
-                <IonToolbar>
-                  <IonTitle>Menu</IonTitle>
-                </IonToolbar>
-              </IonHeader>
-              <IonContent>
-                <IonList>
-                  <IonMenuToggle>
-                    <IonItem routerLink="/home">
-                      <IonLabel>Home</IonLabel>
-                    </IonItem>
-                  </IonMenuToggle>
-                  <IonMenuToggle>
-                    <IonItem routerLink="/tasklist">
-                      <IonLabel>Task List</IonLabel>
-                    </IonItem>
-                  </IonMenuToggle>
-                  <IonMenuToggle>
-                    <IonItem routerLink="/todolists">
-                      <IonLabel>ToDoLists</IonLabel>
-                    </IonItem>
-                  </IonMenuToggle>
-                </IonList>
-              </IonContent>
-            </IonMenu>
-          </>
-        )}
+        <IonTabs>
+          <IonRouterOutlet id="main" className="router-outlet">
+            <Switch>
+              <Route
+                exact
+                path="/login"
+                render={() => <Login setIsLoggedIn={setLoggedInState} />}
+              />
+              <Route
+                exact
+                path="/signup"
+                render={() => <SignUp setIsLoggedIn={setLoggedInState} />}
+              />
+              {loggedIn ? (
+                <>
+                  <Route exact path="/home" component={Home} />
+                  <Route exact path="/todolists" component={ToDoLists} />
+                  <Route exact path="/tasks/:listId" component={TaskList} />
+                </>
+              ) : (
+                <Redirect to="/login" />
+              )}
+              <Route exact path="/" render={() => <Redirect to="/login" />} />
+              <Route path="*">
+                <Redirect to="/" />
+              </Route>
+            </Switch>
+          </IonRouterOutlet>
+          {loggedIn && (
+            <IonTabBar slot="bottom">
+              <IonTabButton tab="home" href="/home">
+                <IonIcon icon={home} /> <IonLabel>Home</IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="tasks" href="/Todolists">
+                <IonIcon icon={list} /> <IonLabel>Lists</IonLabel>
+              </IonTabButton>
+              <IonTabButton
+                tab="settings"
+                onClick={() => setIsUserMenuOpen(true)}
+              >
+                <IonIcon icon={personCircleOutline} /> <IonLabel>User</IonLabel>
+              </IonTabButton>
+            </IonTabBar>
+          )}
+        </IonTabs>
+        <UserModal
+          isOpen={isUserMenuOpen}
+          onClose={() => setIsUserMenuOpen(false)}
+          onLogout={() => setLoggedInState(false)}
+        />
       </IonReactRouter>
     </IonApp>
   );

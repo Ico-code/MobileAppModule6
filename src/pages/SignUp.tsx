@@ -4,7 +4,9 @@ import { useHistory } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../firebaseConfig';
 
-const SignUp: React.FC = () => {
+const SignUp: React.FC<{
+  setIsLoggedIn: (state:boolean) => void;
+}> = ({setIsLoggedIn}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const history = useHistory(); 
@@ -13,6 +15,7 @@ const SignUp: React.FC = () => {
   const handleSignUp = async () => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
+      setIsLoggedIn(true);
       history.push('/home');
       window.location.reload();
     } catch {

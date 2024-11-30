@@ -10,13 +10,20 @@ import {
   IonTitle,
   IonToolbar,
   IonButton,
+  IonButtons,
+  IonIcon,
 } from "@ionic/react";
 import { useHistory } from "react-router-dom";
+import AddTodolistModal from "../components/AddToDoList/AddToDoList";
+import { create, trash } from "ionicons/icons";
 
 const ToDoList: React.FC = () => {
   const ToDoListService = useToDoService();
   const [toDoLists, setToDoLists] = useState<Todolist[]>([]);
+
   const history = useHistory();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const lists = ToDoListService.getToDoLists();
@@ -27,6 +34,10 @@ const ToDoList: React.FC = () => {
     }
     setToDoLists(ToDoListService.getToDoLists());
   }, []);
+
+  const handleSaveTodolists = (todolist: Todolist) => {
+    setToDoLists([...toDoLists, todolist]);
+  };
 
   const handleOpenToDoList = (listId: string) => {
     history.push(`/tasks/${listId}`);
@@ -39,25 +50,45 @@ const ToDoList: React.FC = () => {
           <IonTitle>To-Do Lists</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonButton expand="full" routerLink="/add-todolist" color="success" className="ion-padding-horizontal" mode="md">
+      <IonButton
+        expand="full"
+        onClick={() => setIsModalOpen(true)}
+        color="success"
+        className="ion-padding-horizontal ion-margin-vertical"
+        mode="ios"
+      >
         Add New To-Do List
       </IonButton>
       <IonContent className="ion-padding-horizontal">
         <IonList>
           {toDoLists.map((toDoList) => (
-            <IonItem
-            key={toDoList.id}
-            button
-            onClick={() => handleOpenToDoList(toDoList.id)}
-          >
-            <IonLabel>
-              <h2>{toDoList.title}</h2>
-              <p>{toDoList.description}</p>
-            </IonLabel>
-          </IonItem>
+            <IonItem key={toDoList.id}>
+              <IonLabel onClick={() => handleOpenToDoList(toDoList.id)}>
+                <h2>{toDoList.title}</h2> <p>{toDoList.description}</p>
+              </IonLabel>
+              <IonButtons slot="end">
+                <IonButton
+                  color="primary"
+                  onClick={() => ToDoListService.editToDoList(toDoList.id)}
+                >
+                  <IonIcon slot="icon-only" icon={create} />
+                </IonButton>
+                <IonButton
+                  color="danger"
+                  onClick={() => ToDoListService.deleteToDoList(toDoList.id)}
+                >
+                  <IonIcon slot="icon-only" icon={trash} />
+                </IonButton>
+              </IonButtons>
+            </IonItem>
           ))}
         </IonList>
       </IonContent>
+      <AddTodolistModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveTodolists}
+      />
     </IonPage>
   );
 };
