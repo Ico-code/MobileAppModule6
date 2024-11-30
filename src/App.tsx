@@ -19,7 +19,7 @@ import {
 import { IonReactRouter } from "@ionic/react-router";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
-import SignUp from './pages/SignUp';
+import SignUp from "./pages/SignUp";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -61,67 +61,71 @@ const App: React.FC = () => {
   const history = useHistory();
 
   const logout = () => {
-      history.push("/login"); 
+    history.push("/login");
   };
-  
+
   return (
     <IonApp>
       <IonReactRouter>
-        {location.pathname !== '/login' && location.pathname !== '/signup' && (
-        <>
-        <IonHeader>
-          <IonToolbar>
-            <IonButtons>
-              <IonMenuToggle className="me-a button-size menu-icon">
-                <IonIcon icon={menuOutline}></IonIcon>
-              </IonMenuToggle>
-              <IonButton className="logOut" onClick={logout} routerLink="/login">
-                <IonIcon icon={logOutOutline}></IonIcon>
-              </IonButton>
-            </IonButtons>
-          </IonToolbar>
-        </IonHeader>
-        <IonMenu contentId="main">
-          <IonHeader>
-            <IonToolbar>
-              <IonTitle>Menu</IonTitle>
-            </IonToolbar>
-          </IonHeader>
-          <IonContent>
-            <IonList>
-              <IonMenuToggle>
-                <IonItem routerLink="/home">
-                  <IonLabel>Home</IonLabel>
-                </IonItem>
-              </IonMenuToggle>
-              <IonMenuToggle>
-                <IonItem routerLink="/tasklist">
-                  <IonLabel>Task List</IonLabel>
-                </IonItem>
-              </IonMenuToggle>
-              <IonMenuToggle>
-                <IonItem routerLink="/todolists">
-                  <IonLabel>ToDoLists</IonLabel>
-                </IonItem>
-              </IonMenuToggle>
-            </IonList>
-          </IonContent>
-        </IonMenu>
-        </>
-      )}
-        <IonRouterOutlet id="main">
+        <IonRouterOutlet id="main" style={{ maxWidth: '800px', margin: '0 auto' }}>
           <Switch>
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={SignUp} />
             <Route exact path="/home" component={Home} />
             <Route exact path="/todolists" component={ToDoLists} />
-            <Route exact path="/tasklist" component={TaskList} />
+            <Route exact path="/tasks/:listId" component={TaskList} />
             <Route exact path="/" render={() => <Redirect to="/login" />} />
             <Route path="*">
               <Redirect to="/" />
             </Route>
           </Switch>
         </IonRouterOutlet>
+        {location.pathname !== "/login" && location.pathname !== "/signup" && (
+          <>
+            <IonHeader>
+              <IonToolbar>
+                <IonButtons>
+                  <IonMenuToggle className="me-a button-size menu-icon">
+                    <IonIcon icon={menuOutline}></IonIcon>
+                  </IonMenuToggle>
+                  <IonButton
+                    className="logOut"
+                    onClick={logout}
+                    routerLink="/login"
+                  >
+                    <IonIcon icon={logOutOutline}></IonIcon>
+                  </IonButton>
+                </IonButtons>
+              </IonToolbar>
+            </IonHeader>
+            <IonMenu contentId="main">
+              <IonHeader>
+                <IonToolbar>
+                  <IonTitle>Menu</IonTitle>
+                </IonToolbar>
+              </IonHeader>
+              <IonContent>
+                <IonList>
+                  <IonMenuToggle>
+                    <IonItem routerLink="/home">
+                      <IonLabel>Home</IonLabel>
+                    </IonItem>
+                  </IonMenuToggle>
+                  <IonMenuToggle>
+                    <IonItem routerLink="/tasklist">
+                      <IonLabel>Task List</IonLabel>
+                    </IonItem>
+                  </IonMenuToggle>
+                  <IonMenuToggle>
+                    <IonItem routerLink="/todolists">
+                      <IonLabel>ToDoLists</IonLabel>
+                    </IonItem>
+                  </IonMenuToggle>
+                </IonList>
+              </IonContent>
+            </IonMenu>
+          </>
+        )}
       </IonReactRouter>
     </IonApp>
   );

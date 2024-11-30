@@ -12,7 +12,7 @@ const Home: React.FC = () => {
   const history = useHistory();
 
   const goToTasks = () => {
-    history.push("/tasklist");
+    history.push("/todolists");
   };
   return (
     <IonPage>
