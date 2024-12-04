@@ -15,7 +15,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 
 const Login: React.FC<{
-  setIsLoggedIn: (state:boolean) => void;
+  setIsLoggedIn: (state:boolean, email:string) => void;
 }> = ({setIsLoggedIn}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,7 +26,7 @@ const Login: React.FC<{
     try {
       await signInWithEmailAndPassword(auth, email, password);
       
-      setIsLoggedIn(true);
+      setIsLoggedIn(true, email);
       history.push("/home");
       window.location.reload();
     } catch {

@@ -9,6 +9,7 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonLoading,
   IonMenu,
   IonMenuToggle,
   IonRouterOutlet,
@@ -70,8 +71,11 @@ setupIonicReact();
 
 const App: React.FC = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [forceRender, setForceRender] = useState(0);
 
-  const [loggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const history = useHistory();
 
   const fetchLoggedInState = (): boolean => {
     const state: boolean = JSON.parse(
@@ -80,19 +84,61 @@ const App: React.FC = () => {
     return state;
   };
 
-  const setLoggedInState = (newState: boolean) => {
+  const setLoggedInState = (newState: boolean, email: string = "") => {
+    setLoading(true);
+    if (email !== "") {
+      localStorage.setItem("user", email);
+    }
     localStorage.setItem("loggedin", JSON.stringify(newState));
     setIsLoggedIn(newState);
+    setLoading(false);
+  };
+
+  const fetchEmail = () => {
+    const email = localStorage.getItem("user");
+    if (email == null) {
+      return "";
+    }
+    return email;
+  };
+
+  const updateLoading = () => {
+    try {
+      console.log("Fetching logged-in state...");
+      const currentState = fetchLoggedInState();
+      console.log("Logged-in state fetched:", currentState);
+
+      setIsLoggedIn(currentState);
+    } catch (error) {
+      console.error("Error fetching logged-in state:", error);
+      setIsLoggedIn(false);
+    } finally {
+      setLoading(false);
+      console.log("Loading set to false");
+    }
   };
 
   useEffect(() => {
-    const currentState: boolean = fetchLoggedInState();
-    setIsLoggedIn(currentState);
+    updateLoading();
   }, []);
 
-  return (
-    <IonApp>
-      <IonReactRouter>
+  useEffect(() => {
+    if (!loading && history) {
+      console.log(loading, history, isLoggedIn);
+      if (isLoggedIn) {
+        history.replace("/home");
+      } else {
+        history.replace("/login");
+      }
+    } else {
+      if (history) console.error("history is undefined");
+    }
+    // if(!loading) setForceRender((prev) => prev + 1);
+  }, [loading, isLoggedIn, history]);
+
+  if (!loading) {
+    return (
+      <>
         <IonTabs>
           <IonRouterOutlet id="main" className="router-outlet">
             <Switch>
@@ -106,7 +152,8 @@ const App: React.FC = () => {
                 path="/signup"
                 render={() => <SignUp setIsLoggedIn={setLoggedInState} />}
               />
-              {loggedIn ? (
+
+              {isLoggedIn ? (
                 <>
                   <Route exact path="/home" component={Home} />
                   <Route exact path="/todolists" component={ToDoLists} />
@@ -115,13 +162,12 @@ const App: React.FC = () => {
               ) : (
                 <Redirect to="/login" />
               )}
-              <Route exact path="/" render={() => <Redirect to="/login" />} />
               <Route path="*">
-                <Redirect to="/" />
+                <Redirect to="/login" />
               </Route>
             </Switch>
           </IonRouterOutlet>
-          {loggedIn && (
+          {isLoggedIn && (
             <IonTabBar slot="bottom">
               <IonTabButton tab="home" href="/home">
                 <IonIcon icon={home} /> <IonLabel>Home</IonLabel>
@@ -138,14 +184,16 @@ const App: React.FC = () => {
             </IonTabBar>
           )}
         </IonTabs>
+        <IonLoading isOpen={loading} message="Loading..." />
         <UserModal
           isOpen={isUserMenuOpen}
           onClose={() => setIsUserMenuOpen(false)}
           onLogout={() => setLoggedInState(false)}
+          email={fetchEmail()}
         />
-      </IonReactRouter>
-    </IonApp>
-  );
+      </>
+    );
+  }
 };
 
 export default App;
