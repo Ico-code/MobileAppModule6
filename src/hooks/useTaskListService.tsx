@@ -45,8 +45,15 @@ export const useService = () => {
   };
 
   const editTaskList = (taskId: string) => {
-    return;
-  }
+    return fetchSpecificTask(taskId);
+  };
+
+  const fetchSpecificTask = (taskId: string): Task | undefined => {
+    const tasks: Task[] = JSON.parse(localStorage.getItem("tasks") || "[]");
+    const task = tasks.find((task) => task.id === taskId);
+
+    return taskId === "" ? undefined : task;
+  };
 
   const defaultTasks = () => {
     return [
@@ -99,6 +106,7 @@ export const useService = () => {
     addTasks,
     editTaskList,
     defaultTasks,
+    fetchSpecificTask
   };
 };
 

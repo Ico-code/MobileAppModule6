@@ -19,8 +19,9 @@ interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   onLogout: (state:boolean) => void;
+  email:string
 }
-const UserModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onLogout }) => {
+const UserModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onLogout, email }) => {
   const history = useHistory();
 
   const logout = () => {
@@ -48,7 +49,7 @@ const UserModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onLogout }) 
       <IonContent>
         <IonCard>
           <IonCardHeader>
-            <p>Email: someEmail@address</p>
+            <p>Email: {email}</p>
           </IonCardHeader>
           <IonCardContent>
             <IonButton

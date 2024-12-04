@@ -40,6 +40,8 @@ http://ionicframework.com/docs/theming/ */
 .button-size {
     margin-top: auto;
     margin-bottom: auto;
+    max-width: auto;
+    max-height: auto;
     width: 60px;
     height: 36px;
     margin-right: 20px;
@@ -66,4 +68,12 @@ http://ionicframework.com/docs/theming/ */
 #taskHeader {
     display: flex;
     flex-direction: row;
+}
+
+#homeButtonContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+
 }

@@ -85,13 +85,13 @@ const TaskList: React.FC = () => {
         </IonList>
       </IonContent>
       <IonFab slot="fixed" horizontal="end" vertical="bottom" className="me-3">
-        <IonFabButton
+        {/* <IonFabButton
           onClick={() => resetTasksList()}
           color="success"
           id="resetButton"
         >
           <span>Reset</span>
-        </IonFabButton>
+        </IonFabButton> */}
         <IonFabButton
           onClick={() => setIsModalOpen(true)}
           color="success"

@@ -59,7 +59,7 @@ const ToDoList: React.FC = () => {
       >
         Add New To-Do List
       </IonButton>
-      <IonContent className="ion-padding-horizontal">
+      <IonContent className="ion-padding-horizontal ion-margin-vertical">
         <IonList>
           {toDoLists.map((toDoList) => (
             <IonItem key={toDoList.id}>

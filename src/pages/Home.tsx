@@ -1,5 +1,6 @@
 import {
   IonButton,
+  IonButtons,
   IonContent,
   IonHeader,
   IonPage,
@@ -11,9 +12,18 @@ import { useHistory } from "react-router";
 const Home: React.FC = () => {
   const history = useHistory();
 
-  const goToTasks = () => {
+  const GotoTodolists = () => {
     history.push("/todolists");
   };
+
+  const GotoLogin = () => {
+    history.push("/login");
+  }
+
+  const GotoSignup = () => {
+    history.push("/signup");
+  }
+
   return (
     <IonPage>
       <IonHeader>
@@ -23,7 +33,14 @@ const Home: React.FC = () => {
       </IonHeader>
       <IonContent className="ion-justify-content-center ion-text-center ion-align-items-center center-content">
         <p>Welcome to the main page!</p>
-        <IonButton onClick={goToTasks}>Go to Todo-Lists!</IonButton>
+        <p>Log in or sign up if you haven't already</p>
+        <IonButtons id="homeButtonContainer">
+          <div style={{ marginBottom : "20px"}}>
+            <IonButton color="primary" style={{ marginRight : "10px", padding : "10px"}} fill="solid" onClick={GotoLogin}>Log in</IonButton>
+            <IonButton color="primary" style={{ marginLeft : "10px", padding : "10px"}} fill="solid" onClick={GotoSignup}>Sign up</IonButton>
+          </div>
+          <IonButton color="secondary" fill="solid" onClick={GotoTodolists}>Go to Todo-Lists!</IonButton>
+        </IonButtons>
       </IonContent>
     </IonPage>
   );

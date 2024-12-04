@@ -8,8 +8,8 @@ import {
   IonIcon,
   IonButton,
 } from "@ionic/react";
-import useService,{ Task } from "../../hooks/useTaskListService";
-import { trashOutline } from "ionicons/icons";
+import useService, { Task } from "../../hooks/useTaskListService";
+import { create, trashOutline } from "ionicons/icons";
 
 interface ListItem {
   Task: Task;
@@ -17,27 +17,51 @@ interface ListItem {
 }
 
 const TaskListItem: React.FC<ListItem> = ({ Task, setTasks }) => {
+  const { deleteTasks, editTaskList, fetchSpecificTask } = useService();
 
-  const {deleteTasks} = useService();
-
-  const deleteItem = (id:string) => {
+  const deleteItem = (id: string) => {
     const newTaskList = deleteTasks(id);
-    setTasks(newTaskList)
+    setTasks(newTaskList);
+  };
+
+  const editItem = (id:string) => {
+    const editableTask = fetchSpecificTask(id);
+
+  };
+
+  const saveChanges = (newTaskList:any) => {
+    setTasks(newTaskList);
   }
 
   return (
-      <IonCard id={Task.id} className="flexContainer">
-        <div>
-          <IonCardHeader>
-            <IonCardTitle>{Task.title}</IonCardTitle>
-            <IonCardSubtitle>{Task.subtitle}</IonCardSubtitle>
-          </IonCardHeader>
-          <IonCardContent>{Task.description}</IonCardContent>
-        </div>
-        <IonButton color="danger" className="ms-a button-size" onClick={()=>{deleteItem(Task.id)}}>
-          <IonIcon icon={trashOutline}></IonIcon>
-        </IonButton>
-      </IonCard>
+    <IonCard id={Task.id} className="flexContainer">
+      <div>
+        <IonCardHeader>
+          <IonCardTitle>{Task.title}</IonCardTitle>
+          <IonCardSubtitle>{Task.subtitle}</IonCardSubtitle>
+        </IonCardHeader>
+        <IonCardContent>{Task.description}</IonCardContent>
+      </div>
+      <div id="taskControls" className="ms-a">
+      <IonButton
+        color="primary"
+        className="button-size"
+        onClick={() => editItem(Task.id)}
+      >
+        <IonIcon slot="icon-only" icon={create} />
+      </IonButton>
+      <IonButton
+        color="danger"
+        className="button-size"
+        onClick={() => {
+          deleteItem(Task.id);
+        }}
+      >
+        <IonIcon icon={trashOutline}></IonIcon>
+      </IonButton>
+
+      </div>
+    </IonCard>
   );
 };
 
