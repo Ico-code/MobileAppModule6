@@ -170,7 +170,6 @@ const App: React.FC = () => {
                     path="/tasks/:listId"
                     render={() => (
                       <TaskList
-                        key={activeTaskList.length}
                         currentTaskList={activeTaskList}
                         updateCurrentTaskList={updateCurrentTaskList}
                       />
