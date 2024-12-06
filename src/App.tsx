@@ -66,8 +66,8 @@ import {
 import { useEffect, useState } from "react";
 import ToDoLists from "./pages/ToDoLists";
 import UserModal from "./components/UserModal/UserModal";
-import { Task } from "./hooks/useTaskListService";
-import { Todolist } from "./hooks/useToDoListService";
+import { Todolist, TodoProvider } from "./hooks/useToDoListService";
+import { Task, TaskProvider } from "./hooks/useTaskListService";
 
 setupIonicReact();
 
@@ -75,7 +75,7 @@ const App: React.FC = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-  
+
   // Used for storing Tasks for the open/selected todolist
   const [activeTaskList, setActiveTaskList] = useState<Task[]>([]);
 
@@ -107,10 +107,6 @@ const App: React.FC = () => {
     return email;
   };
 
-  const updateCurrentTaskList = (list:Task[]) => {
-    setActiveTaskList(list);
-  }
-
   const updateLoading = () => {
     try {
       console.log("Fetching logged-in state...");
@@ -131,84 +127,81 @@ const App: React.FC = () => {
     updateLoading();
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log("Updated activeTaskList:", activeTaskList);
-  },[activeTaskList])
+  }, [activeTaskList]);
 
   if (!loading) {
     return (
-      <>
-        <IonTabs>
-          <IonRouterOutlet id="main" className="router-outlet">
-            <Switch>
-              <Route exact path="/home" component={() => <Home loggedIn={isLoggedIn} />} />
-              <Route
-                exact
-                path="/login"
-                component={() => <Login setIsLoggedIn={setLoggedInState} />}
-              />
-              <Route
-                exact
-                path="/signup"
-                component={() => <SignUp setIsLoggedIn={setLoggedInState} />}
-              />
+      <TodoProvider>
+        <TaskProvider>
+          <IonTabs>
+            <IonRouterOutlet id="main" className="router-outlet">
+              <Switch>
+                <Route
+                  exact
+                  path="/home"
+                  component={() => <Home loggedIn={isLoggedIn} />}
+                />
+                <Route
+                  exact
+                  path="/login"
+                  component={() => <Login setIsLoggedIn={setLoggedInState} />}
+                />
+                <Route
+                  exact
+                  path="/signup"
+                  component={() => <SignUp setIsLoggedIn={setLoggedInState} />}
+                />
 
-              {isLoggedIn ? (
-                <>
-                  <Route
-                    exact
-                    path="/todolists"
-                    component={() => (
-                      <ToDoLists
-                        currentTodoList={activeTodoLists}
-                        setCurrentTodoList={setActiveTodoLists}
-                      />
-                    )}
-                  />
-                  <Route
-                    exact
-                    path="/tasks/:listId"
-                    component={() => (
-                      <TaskList
-                        currentTaskList={activeTaskList}
-                        updateCurrentTaskList={updateCurrentTaskList}
-                      />
-                    )}
-                  />
-                </>
-              ) : (
-                <Redirect to="/home" />
-              )}
-              <Route path="*">
-                <Redirect to="/home" />
-              </Route>
-            </Switch>
-          </IonRouterOutlet>
-          {isLoggedIn && (
-            <IonTabBar slot="bottom">
-              <IonTabButton tab="home" href="/home">
-                <IonIcon icon={home} /> <IonLabel>Home</IonLabel>
-              </IonTabButton>
-              <IonTabButton tab="tasks" href="/Todolists">
-                <IonIcon icon={list} /> <IonLabel>Lists</IonLabel>
-              </IonTabButton>
-              <IonTabButton
-                tab="settings"
-                onClick={() => setIsUserMenuOpen(true)}
-              >
-                <IonIcon icon={personCircleOutline} /> <IonLabel>User</IonLabel>
-              </IonTabButton>
-            </IonTabBar>
-          )}
-        </IonTabs>
-        <IonLoading isOpen={loading} message="Loading..." />
-        <UserModal
-          isOpen={isUserMenuOpen}
-          onClose={() => setIsUserMenuOpen(false)}
-          onLogout={() => setLoggedInState(false)}
-          email={fetchEmail()}
-        />
-      </>
+                {isLoggedIn ? (
+                  <>
+                    <Route
+                      exact
+                      path="/todolists"
+                      component={() => <ToDoLists />}
+                    />
+                    <Route
+                      exact
+                      path="/tasks/:listId"
+                      component={() => <TaskList />}
+                    />
+                  </>
+                ) : (
+                  <Redirect to="/home" />
+                )}
+                <Route path="*">
+                  <Redirect to="/home" />
+                </Route>
+              </Switch>
+            </IonRouterOutlet>
+            {isLoggedIn && (
+              <IonTabBar slot="bottom">
+                <IonTabButton tab="home" href="/home">
+                  <IonIcon icon={home} /> <IonLabel>Home</IonLabel>
+                </IonTabButton>
+                <IonTabButton tab="tasks" href="/Todolists">
+                  <IonIcon icon={list} /> <IonLabel>Lists</IonLabel>
+                </IonTabButton>
+                <IonTabButton
+                  tab="settings"
+                  onClick={() => setIsUserMenuOpen(true)}
+                >
+                  <IonIcon icon={personCircleOutline} />{" "}
+                  <IonLabel>User</IonLabel>
+                </IonTabButton>
+              </IonTabBar>
+            )}
+          </IonTabs>
+          <IonLoading isOpen={loading} message="Loading..." />
+          <UserModal
+            isOpen={isUserMenuOpen}
+            onClose={() => setIsUserMenuOpen(false)}
+            onLogout={() => setLoggedInState(false)}
+            email={fetchEmail()}
+          />
+        </TaskProvider>
+      </TodoProvider>
     );
   }
 };

@@ -8,10 +8,10 @@ const container = document.getElementById("root");
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
-    <IonApp>
-      <IonReactRouter>
-        <App />
-      </IonReactRouter>
-    </IonApp>
+      <IonApp>
+        <IonReactRouter>
+          <App />
+        </IonReactRouter>
+      </IonApp>
   </React.StrictMode>
 );

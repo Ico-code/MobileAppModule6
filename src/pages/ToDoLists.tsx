@@ -1,4 +1,7 @@
-import useToDoService, { Todolist } from "../hooks/useToDoListService";
+import useToDoService, {
+  Todolist,
+  useTodolistContext,
+} from "../hooks/useToDoListService";
 import React, { useState, useEffect } from "react";
 import {
   IonContent,
@@ -12,18 +15,17 @@ import {
   IonButton,
   IonButtons,
   IonIcon,
+  IonText,
 } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 import AddTodolistModal from "../components/AddToDoList/AddToDoList";
 import { create, trash } from "ionicons/icons";
 import EditTodolistModal from "../components/EditToDoList/EditToDoList";
 
-const ToDoList: React.FC<{
-  currentTodoList: Todolist[];
-  setCurrentTodoList: (todolist:Todolist[]) => void;
-}> = ({currentTodoList, setCurrentTodoList}) => {
+const ToDoList: React.FC = () => {
   const ToDoListService = useToDoService();
-  const [toDoLists, setToDoLists] = useState<Todolist[]>([]);
+  const { activeTodolist } = useTodolistContext();
+  const [selectedId, setselectedId ] = useState<string>("");
 
   const history = useHistory();
 
@@ -31,22 +33,25 @@ const ToDoList: React.FC<{
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
-    const lists = ToDoListService.getToDoLists();
-    if (lists.length <= 0) {
-      ToDoListService.addToDoLists(ToDoListService.defaultToDolists());
-      setToDoLists(ToDoListService.defaultToDolists);
-      return;
-    }
-    setToDoLists(ToDoListService.getToDoLists());
+    ToDoListService.getToDoLists();
   }, []);
 
   const handleSaveTodolists = (todolist: Todolist) => {
-    setToDoLists([...toDoLists, todolist]);
+      ToDoListService.editToDoList(todolist);
   };
 
   const handleOpenToDoList = (listId: string) => {
     history.push(`/tasks/${listId}`);
   };
+
+  const testing = () => {
+    ToDoListService.addToDoLists(ToDoListService.defaultToDolists());
+  };
+
+  const openEditor = (id:string) => {
+    setIsEditModalOpen(true); 
+    setselectedId(id)
+  }
 
   return (
     <IonPage>
@@ -66,28 +71,33 @@ const ToDoList: React.FC<{
       </IonButton>
       <IonContent className="ion-padding-horizontal ion-margin-vertical">
         <IonList>
-          {toDoLists.map((toDoList) => (
-            <IonItem key={toDoList.id}>
-              <IonLabel onClick={() => handleOpenToDoList(toDoList.id)}>
-                <h2>{toDoList.title}</h2> <p>{toDoList.description}</p>
-              </IonLabel>
-              <IonButtons slot="end">
-                <IonButton
-                  color="primary"
-                  onClick={() => setIsEditModalOpen(true)}
-                >
-                  <IonIcon slot="icon-only" icon={create} />
-                </IonButton>
-                <IonButton
-                  color="danger"
-                  onClick={() => ToDoListService.deleteToDoList(toDoList.id)}
-                >
-                  <IonIcon slot="icon-only" icon={trash} />
-                </IonButton>
-              </IonButtons>
-            </IonItem>
-          ))}
+          {activeTodolist.length > 0 ? (
+            activeTodolist.map((TodoList: Todolist) => (
+              <IonItem key={TodoList.id}>
+                <IonLabel onClick={() => handleOpenToDoList(TodoList.id)}>
+                  <h2>{TodoList.title}</h2> <p>{TodoList.description}</p>
+                </IonLabel>
+                <IonButtons slot="end">
+                  <IonButton
+                    color="primary"
+                    onClick={() => {openEditor(TodoList.id)}}
+                  >
+                    <IonIcon slot="icon-only" icon={create} />
+                  </IonButton>
+                  <IonButton
+                    color="danger"
+                    onClick={() => ToDoListService.deleteToDoList(TodoList.id)}
+                  >
+                    <IonIcon slot="icon-only" icon={trash} />
+                  </IonButton>
+                </IonButtons>
+              </IonItem>
+            ))
+          ) : (
+            <IonText className="ion-padding">No Todolists</IonText>
+          )}
         </IonList>
+        <button onClick={testing}>Add</button>
       </IonContent>
       <AddTodolistModal
         isOpen={isAddModalOpen}
@@ -96,6 +106,7 @@ const ToDoList: React.FC<{
       />
       <EditTodolistModal
         isOpen={isEditModalOpen}
+        todoId={selectedId}
         onClose={() => setIsEditModalOpen(false)}
         onSave={handleSaveTodolists}
       />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   IonContent,
@@ -16,17 +16,19 @@ import { Task, TaskState, useService } from "../../hooks/useTaskListService";
 
 const EditTaskModal: React.FC<{
   isOpen: boolean;
+  taskId: string;
   onClose: () => void;
   onSave: (task: Task) => void;
   parentId: string;
-}> = ({ isOpen, onClose, onSave, parentId }) => {
+
+}> = ({ isOpen, taskId, onClose, onSave, parentId }) => {
   const TaskService = useService();
 
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [description, setDescription] = useState("");
 
-  const [titleError, setTitleError] = useState(""); // Error message for title
+  const [titleError, setTitleError] = useState("");
 
   const validateForm = () => {
     let isValid = true;
@@ -43,19 +45,17 @@ const EditTaskModal: React.FC<{
 
   const handleSave = () => {
     if (!validateForm()) {
-      return; // Stop execution if validation fails
+      return;
     }
 
     const newTask: Task = {
-      id: uuidv4(), // Generate a unique ID
+      id: taskId,
       parentListId: parentId,
       title,
       subtitle,
       description,
       state: TaskState.incomplete,
     };
-
-    TaskService.addTasks([newTask]);
 
     onSave(newTask);
 
@@ -66,6 +66,16 @@ const EditTaskModal: React.FC<{
 
     onClose();
   };
+
+  useEffect(()=> {
+    const Task = TaskService.fetchSpecificTask(taskId);
+    if(Task === undefined) {
+      return;
+    }
+    setTitle(Task.title);
+    setSubtitle(Task.subtitle);
+    setDescription(Task.description);
+  },[isOpen])
 
   return (
     <IonModal isOpen={isOpen} onDidDismiss={onClose}>

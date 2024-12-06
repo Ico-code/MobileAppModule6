@@ -14,25 +14,12 @@ import "./TaskListItem.css";
 
 interface ListItem {
   Task: Task;
-  setTasks: (TaskList:Task[]) => void;
   openEditTask: () => void;
 }
 
-const TaskListItem: React.FC<ListItem> = ({ Task, setTasks, openEditTask }) => {
-  const { deleteTasks, editTaskList, fetchSpecificTask } = useService();
+const TaskListItem: React.FC<ListItem> = ({ Task, openEditTask }) => {
+  const { deleteTasks } = useService();
 
-  const deleteItem = (id: string) => {
-    const newTaskList = deleteTasks(id);
-    setTasks(newTaskList);
-  };
-
-  const editItem = (id: string) => {
-    const editableTask = fetchSpecificTask(id);
-  };
-
-  const saveChanges = (newTaskList: any) => {
-    setTasks(newTaskList);
-  };
 
   return (
     <IonCard id={Task.id} className="flexContainer">
@@ -61,7 +48,7 @@ const TaskListItem: React.FC<ListItem> = ({ Task, setTasks, openEditTask }) => {
           color="danger"
           className="button-size"
           onClick={() => {
-            deleteItem(Task.id);
+            deleteTasks(Task.id);
           }}
         >
           <IonIcon icon={trashOutline}></IonIcon>

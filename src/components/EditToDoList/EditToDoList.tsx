@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   IonContent,
@@ -13,12 +13,14 @@ import {
   IonText,
 } from "@ionic/react";
 import useToDoService, { Todolist } from "../../hooks/useToDoListService";
+import { isStr } from "ionicons/dist/types/components/icon/utils";
 
 const EditTodolistModal: React.FC<{
   isOpen: boolean;
+  todoId: string;
   onClose: () => void;
   onSave: (Todolist: Todolist) => void;
-}> = ({ isOpen, onClose, onSave }) => {
+}> = ({ isOpen, todoId, onClose, onSave }) => {
   const TodoService = useToDoService();
 
   const [title, setTitle] = useState("");
@@ -41,16 +43,14 @@ const EditTodolistModal: React.FC<{
 
   const handleSave = () => {
     if (!validateForm()) {
-      return; // Stop execution if validation fails
+      return;
     }
 
     const newTask: Todolist = {
-      id: uuidv4(), // Generate a unique ID
+      id: todoId,
       title,
       description,
     };
-
-    TodoService.addToDoLists([newTask]);
 
     onSave(newTask);
 
@@ -60,6 +60,17 @@ const EditTodolistModal: React.FC<{
 
     onClose();
   };
+
+  useEffect(()=>{
+    console.log(todoId)
+    const TodolistData = TodoService.fetchSpecificList(todoId);
+    console.log(TodolistData)
+    if(TodolistData === undefined) {
+      return;
+    }
+    setTitle(TodolistData.title);
+    setDescription(TodolistData.description);
+  },[isOpen])
 
   return (
     <IonModal isOpen={isOpen} onDidDismiss={onClose}>

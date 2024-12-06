@@ -1,7 +1,11 @@
 import TaskListItem from "../components/TaskListItem/TaskListItem";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import useService, { Task } from "../hooks/useTaskListService";
+import useService, {
+  Task,
+  TaskProvider,
+  useTaskListContext,
+} from "../hooks/useTaskListService";
 import {
   IonBackButton,
   IonButton,
@@ -27,31 +31,26 @@ interface RouteParams {
   listId: string;
 }
 
-const TaskList: React.FC<{
-  currentTaskList: Task[];
-  updateCurrentTaskList: (TaskList:Task[]) => void;
-}> = ({currentTaskList, updateCurrentTaskList}) => {
-  const { listId } = useParams<RouteParams>(); 
+const TaskList: React.FC = () => {
+  const { listId } = useParams<RouteParams>();
   const parentId = listId;
   const history = useHistory();
 
   const TaskListService = useService();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const { activeTaskList } = useTaskListContext();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const [parentName, setParentName] = useState<string>("");
+  const [selectedTaskId, setSelectedTaskId] = useState<string>("");
+
 
   const handleSaveTask = (task: Task) => {
-    setTasks([...tasks, task]);
-    updateCurrentTaskList([...currentTaskList, task]);
+    TaskListService.editTaskList(task);
   };
 
   useIonViewWillEnter(() => {
-    const lists = TaskListService.getTasks(listId);
-    setTasks(lists);
-    const test = TaskListService.getTasks(parentId);
-    updateCurrentTaskList(test)
+    TaskListService.getTasks(listId);
     fetchParentName(parentId);
   });
 
@@ -59,17 +58,16 @@ const TaskList: React.FC<{
     history.push(`/Todolists`);
   };
 
-  const fetchParentName = (parentId:string) => {
+  const fetchParentName = (parentId: string) => {
     setParentName("UnderProgress");
+  };
+
+  const openEditor = (taskId:string) => {
+    setIsEditModalOpen(true)
+    setSelectedTaskId(taskId);
   }
 
-  // const resetTasksList = () => {
-  //   TaskListService.addTasks(TaskListService.defaultTasks());
-  //   setTasks(TaskListService.defaultTasks);
-  //   return;
-  // };
-
-    return (
+  return (
       <IonPage id="main">
         <IonHeader>
           <div
@@ -84,13 +82,14 @@ const TaskList: React.FC<{
         </IonHeader>
         <IonContent>
           <IonList>
-            {tasks.length > 0 ? (
-              tasks.map((Task) => (
+            {activeTaskList.length > 0 ? (
+              activeTaskList.map((Task: Task) => (
                 <TaskListItem
                   key={Task.id}
                   Task={Task}
-                  setTasks={updateCurrentTaskList}
-                  openEditTask={() => {setIsEditModalOpen(true)}}
+                  openEditTask={() => {
+                    openEditor(Task.id);
+                  }}
                 ></TaskListItem>
               ))
             ) : (
@@ -100,14 +99,12 @@ const TaskList: React.FC<{
             )}
           </IonList>
         </IonContent>
-        <IonFab slot="fixed" horizontal="end" vertical="bottom" className="me-3">
-          {/* <IonFabButton
-            onClick={() => resetTasksList()}
-            color="success"
-            id="resetButton"
-          >
-            <span>Reset</span>
-          </IonFabButton> */}
+        <IonFab
+          slot="fixed"
+          horizontal="end"
+          vertical="bottom"
+          className="me-3"
+        >
           <IonFabButton
             onClick={() => setIsAddModalOpen(true)}
             color="success"
@@ -123,14 +120,14 @@ const TaskList: React.FC<{
           />
           <EditTaskModal
             isOpen={isEditModalOpen}
+            taskId={selectedTaskId}
             onClose={() => setIsEditModalOpen(false)}
             onSave={handleSaveTask}
             parentId={parentId}
           />
         </IonFab>
       </IonPage>
-    );
-  };
-  
+  );
+};
 
 export default TaskList;
