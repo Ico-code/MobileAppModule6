@@ -141,24 +141,24 @@ const App: React.FC = () => {
         <IonTabs>
           <IonRouterOutlet id="main" className="router-outlet">
             <Switch>
+              <Route exact path="/home" component={() => <Home loggedIn={isLoggedIn} />} />
               <Route
                 exact
                 path="/login"
-                render={() => <Login setIsLoggedIn={setLoggedInState} />}
+                component={() => <Login setIsLoggedIn={setLoggedInState} />}
               />
               <Route
                 exact
                 path="/signup"
-                render={() => <SignUp setIsLoggedIn={setLoggedInState} />}
+                component={() => <SignUp setIsLoggedIn={setLoggedInState} />}
               />
 
               {isLoggedIn ? (
                 <>
-                  <Route exact path="/home" component={Home} />
                   <Route
                     exact
                     path="/todolists"
-                    render={() => (
+                    component={() => (
                       <ToDoLists
                         currentTodoList={activeTodoLists}
                         setCurrentTodoList={setActiveTodoLists}
@@ -168,7 +168,7 @@ const App: React.FC = () => {
                   <Route
                     exact
                     path="/tasks/:listId"
-                    render={() => (
+                    component={() => (
                       <TaskList
                         currentTaskList={activeTaskList}
                         updateCurrentTaskList={updateCurrentTaskList}
@@ -177,10 +177,10 @@ const App: React.FC = () => {
                   />
                 </>
               ) : (
-                <Redirect to="/login" />
+                <Redirect to="/home" />
               )}
               <Route path="*">
-                <Redirect to="/login" />
+                <Redirect to="/home" />
               </Route>
             </Switch>
           </IonRouterOutlet>

@@ -27,7 +27,7 @@ const UserModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onLogout, em
   const logout = () => {
     onLogout(false);
     onClose();
-    history.push("/login");
+    history.replace("/home");
   };
 
   return (
