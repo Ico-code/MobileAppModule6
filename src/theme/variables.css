@@ -77,3 +77,17 @@ http://ionicframework.com/docs/theming/ */
     justify-content: center;
 
 }
+
+
+/* Default styles for completed task */
+.completed {
+    opacity: 0.5; /* Makes the card more translucent */
+    background-color: #f0f0f0; /* Light gray background */
+  }
+  
+  .completed .ion-card-title,
+  .completed .ion-card-subtitle,
+  .completed .ion-card-content {
+    text-decoration: line-through; /* Strike through the text */
+    color: #888; /* Change text color to gray */
+  }

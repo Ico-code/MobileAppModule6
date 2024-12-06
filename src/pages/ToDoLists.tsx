@@ -97,7 +97,7 @@ const ToDoList: React.FC = () => {
             <IonText className="ion-padding">No Todolists</IonText>
           )}
         </IonList>
-        <button onClick={testing}>Add</button>
+        {/* <button onClick={testing}>Add</button> */}
       </IonContent>
       <AddTodolistModal
         isOpen={isAddModalOpen}

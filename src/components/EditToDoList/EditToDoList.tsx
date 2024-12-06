@@ -62,9 +62,7 @@ const EditTodolistModal: React.FC<{
   };
 
   useEffect(()=>{
-    console.log(todoId)
     const TodolistData = TodoService.fetchSpecificList(todoId);
-    console.log(TodolistData)
     if(TodolistData === undefined) {
       return;
     }

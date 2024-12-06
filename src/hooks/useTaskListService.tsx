@@ -108,6 +108,12 @@ export const useService = () => {
     updateActiveTaskListByRemoval(id);
   };
 
+  const deleteTasksForSpecificList = (id: string) => {
+    const tasks = getTasksFromLocalStorage();
+    const updatedTasks = tasks.filter((task) => task.parentListId !== id);
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+  };
+
   const addTasks = (tasks: Task[]) => {
     const existingTasks = getTasksFromLocalStorage();
 
@@ -233,6 +239,7 @@ export const useService = () => {
     editTaskList,
     defaultTasks,
     fetchSpecificTask,
+    deleteTasksForSpecificList,
   };
 };
 

@@ -1,4 +1,5 @@
 import { createContext, ReactNode, useContext, useState } from "react";
+import useService from "./useTaskListService";
 
 export interface Todolist {
   id: string;
@@ -79,6 +80,10 @@ const useToDoService = () => {
     updateActiveTodoList
   } = useListUpdater();
 
+  const {
+    deleteTasksForSpecificList
+  } = useService();
+
   const getToDoListsFromLocalstorage = () => {
     return JSON.parse(localStorage.getItem("todolists") || "[]");
   };
@@ -104,6 +109,7 @@ const useToDoService = () => {
     localStorage.setItem("todolists", JSON.stringify(updatedToDoLists));
 
     updateActiveTodolistByRemoval(id);
+    deleteTasksForSpecificList(id);
   };
 
   const addToDoLists = (todolists: Todolist[]) => {
@@ -126,7 +132,6 @@ const useToDoService = () => {
       return;
     }
     const newList = lists.map((item, i) => (i === listIndex ? {...item , ...todolist }: item))
-    console.log(newList)
     localStorage.setItem("todolists", JSON.stringify(newList));
 
     updateActiveTodoList(todolist);

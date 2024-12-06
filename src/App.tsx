@@ -109,9 +109,9 @@ const App: React.FC = () => {
 
   const updateLoading = () => {
     try {
-      console.log("Fetching logged-in state...");
+      // console.log("Fetching logged-in state...");
       const currentState = fetchLoggedInState();
-      console.log("Logged-in state fetched:", currentState);
+      // console.log("Logged-in state fetched:", currentState);
 
       setIsLoggedIn(currentState);
     } catch (error) {
@@ -119,17 +119,13 @@ const App: React.FC = () => {
       setIsLoggedIn(false);
     } finally {
       setLoading(false);
-      console.log("Loading set to false");
+      // console.log("Loading set to false");
     }
   };
 
   useEffect(() => {
     updateLoading();
   }, []);
-
-  useEffect(() => {
-    console.log("Updated activeTaskList:", activeTaskList);
-  }, [activeTaskList]);
 
   if (!loading) {
     return (
