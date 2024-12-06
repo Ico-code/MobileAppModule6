@@ -10,6 +10,7 @@ import {
   IonInput,
   IonItem,
   IonLabel,
+  IonText,
 } from "@ionic/react";
 import { Task, TaskState, useService } from "../../hooks/useTaskListService";
 
@@ -27,10 +28,29 @@ const AddTaskModal: React.FC<{
   const [subtitle, setSubtitle] = useState("");
   const [description, setDescription] = useState("");
 
+  const [titleError, setTitleError] = useState(""); // Error message for title
+
+  const validateForm = () => {
+    let isValid = true;
+
+    if (!title.trim()) {
+      setTitleError("Title is required.");
+      isValid = false;
+    } else {
+      setTitleError("");
+    }
+
+    return isValid;
+  };
+
   const handleSave = () => {
+    if (!validateForm()) {
+      return; // Stop execution if validation fails
+    }
+
     const newTask: Task = {
       id: uuidv4(), // Generate a unique ID
-      parentListId,
+      parentListId: parentId,
       title,
       subtitle,
       description,
@@ -41,19 +61,19 @@ const AddTaskModal: React.FC<{
 
     onSave(newTask);
 
+    // Reset the form
     setTitle("");
-    setParentListId(parentId);
     setSubtitle("");
     setDescription("");
 
     onClose();
   };
-
+  
   return (
     <IonModal isOpen={isOpen} onDidDismiss={onClose}>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Add Task</IonTitle>
+          <IonTitle>Edit Task</IonTitle>
           <IonButton slot="end" onClick={onClose} className="pe-3">
             Close
           </IonButton>
@@ -67,6 +87,11 @@ const AddTaskModal: React.FC<{
             onIonChange={(e) => setTitle(e.detail.value!)}
           />
         </IonItem>
+        {titleError && (
+          <IonText color="danger">
+            <p className="ion-padding-start">{titleError}</p>
+          </IonText>
+        )}
         <IonItem>
           <IonLabel position="floating">Subtitle</IonLabel>
           <IonInput
@@ -81,7 +106,11 @@ const AddTaskModal: React.FC<{
             onIonChange={(e) => setDescription(e.detail.value!)}
           />
         </IonItem>
-        <IonButton className="ion-margin-vertical" expand="full" onClick={handleSave}>
+        <IonButton
+          className="ion-margin-vertical"
+          expand="full"
+          onClick={handleSave}
+        >
           Save
         </IonButton>
       </IonContent>

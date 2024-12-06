@@ -1,4 +1,4 @@
-import { Redirect, Route, Switch, useHistory } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 import {
   IonApp,
   IonButton,
@@ -66,6 +66,8 @@ import {
 import { useEffect, useState } from "react";
 import ToDoLists from "./pages/ToDoLists";
 import UserModal from "./components/UserModal/UserModal";
+import { Task } from "./hooks/useTaskListService";
+import { Todolist } from "./hooks/useToDoListService";
 
 setupIonicReact();
 
@@ -73,9 +75,12 @@ const App: React.FC = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const [forceRender, setForceRender] = useState(0);
+  
+  // Used for storing Tasks for the open/selected todolist
+  const [activeTaskList, setActiveTaskList] = useState<Task[]>([]);
 
-  const history = useHistory();
+  // Used for storing all todolists that the user has access to
+  const [activeTodoLists, setActiveTodoLists] = useState<Todolist[]>([]);
 
   const fetchLoggedInState = (): boolean => {
     const state: boolean = JSON.parse(
@@ -102,6 +107,10 @@ const App: React.FC = () => {
     return email;
   };
 
+  const updateCurrentTaskList = (list:Task[]) => {
+    setActiveTaskList(list);
+  }
+
   const updateLoading = () => {
     try {
       console.log("Fetching logged-in state...");
@@ -122,19 +131,9 @@ const App: React.FC = () => {
     updateLoading();
   }, []);
 
-  useEffect(() => {
-    if (!loading && history) {
-      console.log(loading, history, isLoggedIn);
-      if (isLoggedIn) {
-        history.replace("/home");
-      } else {
-        history.replace("/login");
-      }
-    } else {
-      if (history) console.error("history is undefined");
-    }
-    // if(!loading) setForceRender((prev) => prev + 1);
-  }, [loading, isLoggedIn, history]);
+  useEffect(()=>{
+    console.log("Updated activeTaskList:", activeTaskList);
+  },[activeTaskList])
 
   if (!loading) {
     return (
@@ -156,8 +155,27 @@ const App: React.FC = () => {
               {isLoggedIn ? (
                 <>
                   <Route exact path="/home" component={Home} />
-                  <Route exact path="/todolists" component={ToDoLists} />
-                  <Route exact path="/tasks/:listId" component={TaskList} />
+                  <Route
+                    exact
+                    path="/todolists"
+                    render={() => (
+                      <ToDoLists
+                        currentTodoList={activeTodoLists}
+                        setCurrentTodoList={setActiveTodoLists}
+                      />
+                    )}
+                  />
+                  <Route
+                    exact
+                    path="/tasks/:listId"
+                    render={() => (
+                      <TaskList
+                        key={activeTaskList.length}
+                        currentTaskList={activeTaskList}
+                        updateCurrentTaskList={updateCurrentTaskList}
+                      />
+                    )}
+                  />
                 </>
               ) : (
                 <Redirect to="/login" />

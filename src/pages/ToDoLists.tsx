@@ -16,14 +16,19 @@ import {
 import { useHistory } from "react-router-dom";
 import AddTodolistModal from "../components/AddToDoList/AddToDoList";
 import { create, trash } from "ionicons/icons";
+import EditTodolistModal from "../components/EditToDoList/EditToDoList";
 
-const ToDoList: React.FC = () => {
+const ToDoList: React.FC<{
+  currentTodoList: Todolist[];
+  setCurrentTodoList: (todolist:Todolist[]) => void;
+}> = ({currentTodoList, setCurrentTodoList}) => {
   const ToDoListService = useToDoService();
   const [toDoLists, setToDoLists] = useState<Todolist[]>([]);
 
   const history = useHistory();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
     const lists = ToDoListService.getToDoLists();
@@ -52,7 +57,7 @@ const ToDoList: React.FC = () => {
       </IonHeader>
       <IonButton
         expand="full"
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => setIsAddModalOpen(true)}
         color="success"
         className="ion-padding-horizontal ion-margin-vertical"
         mode="ios"
@@ -69,7 +74,7 @@ const ToDoList: React.FC = () => {
               <IonButtons slot="end">
                 <IonButton
                   color="primary"
-                  onClick={() => ToDoListService.editToDoList(toDoList.id)}
+                  onClick={() => setIsEditModalOpen(true)}
                 >
                   <IonIcon slot="icon-only" icon={create} />
                 </IonButton>
@@ -85,8 +90,13 @@ const ToDoList: React.FC = () => {
         </IonList>
       </IonContent>
       <AddTodolistModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSave={handleSaveTodolists}
+      />
+      <EditTodolistModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
         onSave={handleSaveTodolists}
       />
     </IonPage>

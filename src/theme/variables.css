@@ -40,8 +40,8 @@ http://ionicframework.com/docs/theming/ */
 .button-size {
     margin-top: auto;
     margin-bottom: auto;
-    max-width: auto;
-    max-height: auto;
+    max-width: 60px !important;
+    max-height: 36px !important;
     width: 60px;
     height: 36px;
     margin-right: 20px;
